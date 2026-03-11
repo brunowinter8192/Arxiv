@@ -21,8 +21,7 @@ def download_paper_workflow(arxiv_id: str, output_dir: str) -> list[TextContent]
 
     os.makedirs(output_dir, exist_ok=True)
     safe_id = arxiv_id.replace("/", "_")
-    filename = f"{safe_id}.pdf"
-    filepath = os.path.join(output_dir, filename)
+    filepath = os.path.join(output_dir, f"{safe_id}.pdf")
 
     download_pdf(pdf_url, filepath)
 

@@ -6,6 +6,7 @@
     "name": "Bruno Winter"
   },
   "keywords": ["arxiv", "papers", "search", "mcp", "academic"],
+  "skills": ["./skills/arxiv/"],
   "mcpServers": {
     "arxiv": {
       "command": "${CLAUDE_PLUGIN_ROOT}/mcp-start.sh",

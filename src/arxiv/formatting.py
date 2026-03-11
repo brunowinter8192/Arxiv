@@ -26,8 +26,8 @@ def format_paper_list(data: dict) -> str:
             lines.append(f"Journal: {p['journal_ref']}")
 
         abstract = p["summary"]
-        if len(abstract) > 300:
-            abstract = abstract[:300] + "..."
+        if len(abstract) > 500:
+            abstract = abstract[:500] + "..."
         lines.append(f"Abstract: {abstract}")
         lines.append("")
 
