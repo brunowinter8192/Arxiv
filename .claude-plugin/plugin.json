@@ -1,0 +1,15 @@
+{
+  "name": "arxiv",
+  "version": "1.0.0",
+  "description": "ArXiv MCP server - search, browse, and download academic papers from ArXiv (read-only)",
+  "author": {
+    "name": "Bruno Winter"
+  },
+  "keywords": ["arxiv", "papers", "search", "mcp", "academic"],
+  "mcpServers": {
+    "arxiv": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/mcp-start.sh",
+      "args": []
+    }
+  }
+}
