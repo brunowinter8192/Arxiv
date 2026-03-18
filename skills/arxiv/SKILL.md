@@ -36,7 +36,7 @@
 ### arxiv_download_paper
 
 - **NEVER download without explicit user request**
-- **NEVER use default path** — always ask user for `output_dir` or use the path they provide
+- `output_dir` is required (no default) — ask user for path if not provided
 - After download: inform user about `/pdf-convert` from RAG plugin for MD conversion
 
 ## Presentation
