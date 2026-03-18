@@ -87,8 +87,50 @@ DOCS.md files that have darunterliegende DOCS MUST include a tree section mappin
 
 dev/ directories follow the same placement rules. Single-script suites are documented in their parent DOCS.md. Multi-script suites get their own DOCS.md.
 
-**Format for dev/ modules:**
+**Format for dev/ modules (benchmarks, evals, tools):**
 - Purpose of the script/suite
 - Usage examples (how to run from project root)
 - CLI flags if applicable
 - Expected output description
+
+### dev/ Investigation Modules
+
+Investigation modules exist to understand and debug a specific problem (e.g., `splade_truncation/`, a corruption bug). They differ from benchmarks/evals because the VALUE is not the scripts — it's the accumulated knowledge about the problem.
+
+**Format for dev/ investigation modules (module-level, NOT per-script):**
+
+```markdown
+## module_name/
+
+### Problem
+
+What happens, when, how does it manifest. Symptoms only — not causes.
+Production code status quo (fixes, config values) → reference `decisions/` file, NOT here.
+
+### Investigation
+
+#### Code Analysis
+
+Which source files were read, what was found, what's correct/divergent.
+Reference file paths and line numbers.
+
+#### External Research
+
+| Source | Result | Relevance |
+|--------|--------|-----------|
+| Name + URL/Issue# | Found ✅ / Nothing ❌ | Why it matters or doesn't |
+
+#### Hypotheses
+
+| Hypothesis | Status | Evidence |
+|------------|--------|----------|
+| Description | Active / Excluded / Unverified | What supports or contradicts it |
+
+### Scripts
+
+Per-script: one-liner purpose + usage example. Scripts explain themselves via docstrings.
+```
+
+**Key difference to src/ DOCS:** src/ modules document what code DOES. dev/ investigation modules document what we KNOW about a problem — scripts are tools within that investigation.
+
+**When to use:** Any dev/ directory that exists because of a specific bug, performance issue, or behavioral question (not benchmarks or eval suites).
