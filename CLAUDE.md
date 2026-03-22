@@ -39,6 +39,7 @@ arxiv/
 ├── requirements.txt
 ├── README.md                       → [Setup & External Docs](README.md)
 ├── decisions/
+│   └── api_design.md
 ├── src/
 │   └── arxiv/                      → [DOCS.md](src/arxiv/DOCS.md)
 ```
