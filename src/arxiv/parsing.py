@@ -1,6 +1,8 @@
 # INFRASTRUCTURE
+import logging
 import feedparser
 
+logger = logging.getLogger(__name__)
 
 API_BASE = "http://export.arxiv.org/api/query"
 

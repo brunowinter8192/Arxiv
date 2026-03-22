@@ -1,3 +1,9 @@
+# INFRASTRUCTURE
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 # FUNCTIONS
 
 def format_paper_list(data: dict) -> str:
