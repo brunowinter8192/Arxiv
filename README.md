@@ -111,7 +111,8 @@ The `mcp-start.sh` script auto-creates the venv if missing.
 ```
 arxiv/
   .claude-plugin/          # Plugin manifest (plugin.json only)
-  skills/arxiv/            # Plugin skill (SKILL.md)
+  agents/arxiv-search.md   # Subagent system prompt
+  skills/agent-arxiv-search/SKILL.md  # Subagent tool reference
   server.py                # MCP Entry Point (Claude Code)
   mcp-start.sh             # Venv bootstrap + server start
   requirements.txt         # Python dependencies
