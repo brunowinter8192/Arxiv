@@ -1,134 +1,65 @@
-# ArXiv MCP Server
+# ArXiv MCP Plugin
 
-Search, browse, and download academic papers from ArXiv via MCP for Claude Code.
+Search, retrieve, and download academic papers from ArXiv directly in Claude Code.
 
-## Stack
+## Features
 
-| Component | Choice | Reason |
-|-----------|--------|--------|
-| API | ArXiv REST API | Official, free, no auth required |
-| Feed Parsing | feedparser | Robust Atom/RSS parser, handles ArXiv extensions |
-| MCP Framework | FastMCP | Consistent with other MCP servers |
+- **Paper search** — query by title, author, abstract, category with Boolean operators
+- **Paper metadata** — full details: authors, abstract, categories, DOI, links
+- **PDF download** — save papers locally for reading or indexing
+- **Autonomous research agent** — dispatches `arxiv-search` for multi-step literature reviews
 
-## Installation
-
-### As Plugin (recommended)
-
-In a Claude Code session:
+## Quick Start
 
 ```
 /plugin marketplace add brunowinter8192/claude-plugins
 /plugin install arxiv
 ```
 
-Restart the session after installation.
+Restart the session after installation. The plugin is ready to use — no API keys required.
 
-### Manual (.mcp.json)
+## Prerequisites
 
-Add to your project's `.mcp.json` (all paths must be absolute):
+- Python >= 3.10
+- Internet connection (ArXiv API is public and free, no auth required)
+
+## Setup
+
+For manual installation without the plugin marketplace:
+
+```bash
+git clone https://github.com/brunowinter8192/Arxiv.git
+cd Arxiv
+python -m venv .venv
+./.venv/bin/pip install -r requirements.txt
+```
+
+Add to your project's `.mcp.json` (absolute paths):
 
 ```json
 {
   "mcpServers": {
     "arxiv": {
-      "command": "/absolute/path/to/arxiv/mcp-start.sh",
+      "command": "/absolute/path/to/Arxiv/mcp-start.sh",
       "args": []
     }
   }
 }
 ```
 
-## Plugin Components
+`mcp-start.sh` auto-creates the venv if missing.
 
-| Component | Name | Description |
-|-----------|------|-------------|
-| **Skill** | `/arxiv` | Query construction strategy, field prefixes, presentation rules |
-| **MCP Server** | `arxiv` | 3 tools: search, get paper metadata, download PDF |
+## Usage
 
-## MCP Tools
+### MCP Tools
 
-### arxiv_search
+| Tool | What it does | When to use |
+|------|-------------|-------------|
+| `arxiv_search` | Search papers by query with field prefixes and Boolean operators | Finding papers on a topic, exploring recent work |
+| `arxiv_get_paper` | Retrieve full metadata for one or more papers by ArXiv ID | Looking up a specific paper, getting full abstract and links |
+| `arxiv_download_paper` | Download a paper's PDF to a local directory | Saving papers for offline reading or RAG indexing |
 
-Search ArXiv papers by query with field prefixes and Boolean operators.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `query` | string | Yes | - | Search query using ArXiv syntax (field prefixes + Boolean) |
-| `sort_by` | string | No | relevance | `relevance`, `lastUpdatedDate`, or `submittedDate` |
-| `sort_order` | string | No | descending | `descending` or `ascending` |
-| `start` | int | No | 0 | 0-based index of first result (for paging) |
-| `max_results` | int | No | 10 | Max results to return (1-2000) |
-
-```
-mcp__plugin_arxiv_arxiv__arxiv_search(query="ti:transformer AND cat:cs.CL", max_results=5)
-mcp__plugin_arxiv_arxiv__arxiv_search(query="au:bengio AND submittedDate:[202401010000 TO 202501010000]", sort_by="submittedDate")
-```
-
-### arxiv_get_paper
-
-Get full metadata for one or more papers by ArXiv ID.
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `ids` | string | Yes | Comma-separated ArXiv IDs (e.g., `2301.07041` or `2301.07041,2305.14314`) |
-
-```
-mcp__plugin_arxiv_arxiv__arxiv_get_paper(ids="2301.07041")
-mcp__plugin_arxiv_arxiv__arxiv_get_paper(ids="2301.07041,2305.14314")
-```
-
-### arxiv_download_paper
-
-Download a paper's PDF from ArXiv.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `arxiv_id` | string | Yes | - | ArXiv paper ID (e.g., `2301.07041`) |
-| `output_dir` | string | No | /tmp/arxiv | Directory to save the PDF |
-
-```
-mcp__plugin_arxiv_arxiv__arxiv_download_paper(arxiv_id="2301.07041", output_dir="/tmp/papers")
-```
-
-## Prerequisites
-
-- Python >= 3.10
-- Internet connection (ArXiv API is public, no auth required)
-
-## Setup
-
-```bash
-git clone https://github.com/brunowinter8192/arxiv.git
-cd arxiv
-python -m venv .venv
-./.venv/bin/pip install -r requirements.txt
-```
-
-The `mcp-start.sh` script auto-creates the venv if missing.
-
-## Directory Structure
-
-```
-arxiv/
-  .claude-plugin/          # Plugin manifest (plugin.json only)
-  agents/arxiv-search.md   # Subagent system prompt
-  skills/agent-arxiv-search/SKILL.md  # Subagent tool reference
-  server.py                # MCP Entry Point (Claude Code)
-  mcp-start.sh             # Venv bootstrap + server start
-  requirements.txt         # Python dependencies
-  src/arxiv/               # Module implementations (see DOCS.md)
-    parsing.py             # XML feed parsing
-    search.py              # Search orchestration
-    get_paper.py           # Paper metadata retrieval
-    download_paper.py      # PDF download
-    formatting.py          # Output formatting
-```
-
-**Module details:** [src/arxiv/DOCS.md](src/arxiv/DOCS.md)
-
-## ArXiv Query Syntax
-
-### Field Prefixes
+#### Query Syntax
 
 | Prefix | Field | Example |
 |--------|-------|---------|
@@ -138,34 +69,54 @@ arxiv/
 | `cat:` | Category | `cat:cs.CL` |
 | `all:` | All fields | `all:attention` |
 
-### Boolean Operators
+Boolean operators: `AND`, `OR`, `ANDNOT` (uppercase). Date filter: `submittedDate:[YYYYMMDD0000 TO YYYYMMDD0000]`.
 
-`AND`, `OR`, `ANDNOT` — must be uppercase.
+### Skills & Commands
 
-```
-ti:transformer AND cat:cs.CL
-au:lecun OR au:bengio
-ti:attention ANDNOT cat:cs.CV
-```
+| Skill | What it does |
+|-------|-------------|
+| `/arxiv:agent-arxiv-search` | Tool reference and query strategy guide for the arxiv-search agent |
 
-### Date Filtering
+### Agents
 
-```
-submittedDate:[YYYYMMDD0000 TO YYYYMMDD0000]
-```
+| Agent | What it handles |
+|-------|----------------|
+| `arxiv-search` | Autonomous paper search specialist — multi-step literature review, query refinement, result summarization |
 
-Example: Papers from 2024:
-```
-au:smith AND submittedDate:[202401010000 TO 202501010000]
-```
+## Workflows
 
-### Common Categories
+**Literature review:** Ask Claude to research a topic. The `arxiv-search` agent runs multiple queries with different field prefixes, filters by category and date, and returns a curated paper list with summaries.
 
-| Code | Field |
-|------|-------|
-| `cs.CL` | Computation and Language (NLP) |
-| `cs.CV` | Computer Vision |
-| `cs.LG` | Machine Learning |
-| `cs.AI` | Artificial Intelligence |
-| `cs.IR` | Information Retrieval |
-| `stat.ML` | Statistics - Machine Learning |
+**Paper lookup + download:** Use `arxiv_get_paper` to fetch metadata for known ArXiv IDs, then `arxiv_download_paper` to save PDFs locally.
+
+**Exploratory search:** Start broad with `all:keyword`, then narrow with `ti:` and `cat:` prefixes once you know the relevant categories.
+
+## Troubleshooting
+
+<details>
+<summary>No results returned</summary>
+
+ArXiv search is exact-match on field prefixes. Try:
+- Use `all:keyword` instead of a bare query
+- Check Boolean operators are uppercase (`AND`, not `and`)
+- Remove date filters to broaden the search
+- Simplify the query — fewer conditions return more results
+</details>
+
+<details>
+<summary>ArXiv API rate limiting</summary>
+
+ArXiv recommends at least 3 seconds between requests. If you receive empty responses or connection errors after rapid successive searches, wait a few seconds before retrying. The plugin does not add automatic delays.
+</details>
+
+<details>
+<summary>PDF download fails or saves to wrong path</summary>
+
+- `output_dir` must be an absolute path that exists on your filesystem (e.g., `/tmp/papers`)
+- If the directory does not exist, create it first: `mkdir -p /tmp/papers`
+- Check that the ArXiv ID is valid — use `arxiv_get_paper` first to confirm the paper exists
+</details>
+
+## License
+
+MIT
