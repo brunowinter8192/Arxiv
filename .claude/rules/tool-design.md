@@ -1,1 +1,0 @@
-/Users/brunowinter2000/.claude/shared-rules/mcp/tool-design.md

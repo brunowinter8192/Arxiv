@@ -1,1 +1,0 @@
-/Users/brunowinter2000/.claude/shared-rules/global/claude-md-convention.md
