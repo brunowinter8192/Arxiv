@@ -1,6 +1,6 @@
 ---
 name: arxiv-search
-description: Search ArXiv academic papers, get full metadata, and download PDFs via CLI. Use when user asks to find research papers, search arxiv, look up paper abstracts, fetch paper by ID, or download academic PDFs.
+description: See ~/.claude/shared-rules/global/cli-skills.md
 ---
 
 # ArXiv Paper Search — Skill
