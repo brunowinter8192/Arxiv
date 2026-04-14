@@ -1,17 +1,52 @@
 ---
 name: arxiv-search
-description: ArXiv paper search — tool reference, workflows, and report formats
+description: Search ArXiv academic papers, get full metadata, and download PDFs via CLI. Use when user asks to find research papers, search arxiv, look up paper abstracts, fetch paper by ID, or download academic PDFs.
 ---
 
 # ArXiv Paper Search — Skill
+
+## CLI Invocation
+
+All tools are invoked via the Bash tool using absolute paths:
+
+```
+/Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/.venv/bin/python \
+  /Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/cli.py <cmd> [args]
+```
+
+### Quick Reference — All 3 Tools
+
+```bash
+# Search papers
+python cli.py search "ti:attention mechanism AND cat:cs.CL" --max-results 20
+python cli.py search "all:retrieval augmented generation" --sort-by submittedDate
+python cli.py search "au:Vaswani AND ti:attention" --sort-order ascending
+
+# Get full metadata by ID (comma-separated for batch)
+python cli.py get_paper "2301.12345"
+python cli.py get_paper "2301.12345,2305.67890,1706.03762"
+
+# Download PDF
+python cli.py download_paper "1706.03762" "/tmp/papers"
+```
+
+**Always use the full absolute paths** when invoking from the Bash tool — the skill runs from arbitrary working directories:
+
+```bash
+/Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/.venv/bin/python \
+  /Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/cli.py \
+  search "ti:transformer AND cat:cs.LG" --max-results 10 --sort-by submittedDate
+```
+
+On error (import failure, API error): the CLI prints to stderr and exits non-zero.
 
 ## Tools
 
 | Tool | Purpose |
 |------|---------|
-| arxiv_search | Search papers by query with field prefixes and Boolean operators |
-| arxiv_get_paper | Get full metadata + abstract by ArXiv ID (comma-separated for batch) |
-| arxiv_download_paper | Download paper PDF to local directory |
+| search | Search papers by query with field prefixes and Boolean operators |
+| get_paper | Get full metadata + abstract by ArXiv ID (comma-separated for batch) |
+| download_paper | Download paper PDF to local directory |
 
 ## Search Strategy
 
@@ -56,19 +91,19 @@ Combine with Boolean operators: `AND`, `OR`, `ANDNOT`
 
 ## Parameter Reference
 
-### arxiv_search
+### search
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | query | str | required | Search query with field prefixes and Boolean operators |
-| sort_by | relevance/lastUpdatedDate/submittedDate | relevance | Sort order |
-| sort_order | descending/ascending | descending | Sort direction |
-| start | int | 0 | Offset for pagination |
-| max_results | int | 10 | Number of results to return |
+| --sort-by | relevance/lastUpdatedDate/submittedDate | relevance | Sort order |
+| --sort-order | descending/ascending | descending | Sort direction |
+| --start | int | 0 | Offset for pagination |
+| --max-results | int | 10 | Number of results to return (max 2000) |
 
 **Output:** Paper list with title, ArXiv ID, authors, date, categories, abstract preview (500 chars).
 
-### arxiv_get_paper
+### get_paper
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -78,7 +113,7 @@ Combine with Boolean operators: `AND`, `OR`, `ANDNOT`
 
 **When to use:** Search results only show 500 char abstract preview. Use get_paper for the full abstract to understand actual contribution.
 
-### arxiv_download_paper
+### download_paper
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -97,12 +132,12 @@ Fire 3-5 query variations:
 - Rephrase the topic using different terms and field prefixes
 - Start specific (`ti:` + category), then broaden (`all:`)
 - Try synonyms as separate searches, not combined queries
-- Use `sort_by=submittedDate` for recent work, `relevance` for best match
+- Use `--sort-by submittedDate` for recent work, `relevance` for best match
 
 ### Step 2: Get Full Details
 
 For the top 5-10 results by relevance:
-- Call `arxiv_get_paper` with comma-separated IDs to get full abstracts
+- Call `get_paper` with comma-separated IDs to get full abstracts
 - Search results only show 500 char preview — full abstract reveals actual contribution
 
 ### Step 3: Synthesize
@@ -139,7 +174,7 @@ Report findings in structured format.
 
 - **Search:** Fetch 10-20 results per query, read full abstracts on top 5-10
 - **Batch lookup:** Use comma-separated IDs in get_paper for efficiency (one call, multiple papers)
-- **Pagination:** Use `start` parameter for additional results (start=0, start=10, start=20)
+- **Pagination:** Use `--start` parameter for additional results (--start 0, --start 10, --start 20)
 
 ## Presentation
 
