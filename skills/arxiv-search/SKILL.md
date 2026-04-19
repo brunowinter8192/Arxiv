@@ -7,35 +7,26 @@ description: See ~/.claude/shared-rules/global/cli-skills.md
 
 ## CLI Invocation
 
-All tools are invoked via the Bash tool using absolute paths:
+All tools are invoked via the `arxiv-cli` wrapper (installed at `~/.local/bin/arxiv-cli`, in PATH):
 
 ```
-/Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/.venv/bin/python \
-  /Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/cli.py <cmd> [args]
+arxiv-cli <cmd> [args]
 ```
 
 ### Quick Reference — All 3 Tools
 
 ```bash
 # Search papers
-python cli.py search "ti:attention mechanism AND cat:cs.CL" --max-results 20
-python cli.py search "all:retrieval augmented generation" --sort-by submittedDate
-python cli.py search "au:Vaswani AND ti:attention" --sort-order ascending
+arxiv-cli search "ti:attention mechanism AND cat:cs.CL" --max-results 20
+arxiv-cli search "all:retrieval augmented generation" --sort-by submittedDate
+arxiv-cli search "au:Vaswani AND ti:attention" --sort-order ascending
 
 # Get full metadata by ID (comma-separated for batch)
-python cli.py get_paper "2301.12345"
-python cli.py get_paper "2301.12345,2305.67890,1706.03762"
+arxiv-cli get_paper "2301.12345"
+arxiv-cli get_paper "2301.12345,2305.67890,1706.03762"
 
 # Download PDF
-python cli.py download_paper "1706.03762" "/tmp/papers"
-```
-
-**Always use the full absolute paths** when invoking from the Bash tool — the skill runs from arbitrary working directories:
-
-```bash
-/Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/.venv/bin/python \
-  /Users/brunowinter2000/Documents/ai/Meta/ClaudeCode/MCP/arxiv/cli.py \
-  search "ti:transformer AND cat:cs.LG" --max-results 10 --sort-by submittedDate
+arxiv-cli download_paper "1706.03762" "/tmp/papers"
 ```
 
 On error (import failure, API error): the CLI prints to stderr and exits non-zero.
